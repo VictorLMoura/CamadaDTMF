@@ -1,9 +1,18 @@
+from signalTeste import *
+import numpy as np
+import sounddevice as sd
+import matplotlib.pyplot as plt
+import sys
 import pyaudio
 import array
 import math
 import time
 import signalTeste
+import keyboard
+import click
 import matplotlib.pyplot as plt
+
+sm = signalMeu()
 
 def main():
     user_freq = [697.0, 770.0, 852.0, 941.0,
@@ -27,30 +36,27 @@ def main():
         'D': (user_freq[3], user_freq[7]),
     }
 
-    sr = 44100
-    length = .25
-    volume = .25
-
-    p = pyaudio.PyAudio()
-    stream = p.open(rate=sr, channels=1, format=pyaudio.paFloat32, output=True)
+    fs = 44100
 
     tone_set = user_tones
     while True:
-        commands = input('>>>').upper()
-        for command in commands:
-            try:
-                tone = tone_set[command]
-            except KeyError:
-                print('Invalid sequence: \'{}\'. Ignoring'.format(command))
-                continue
+        key = click.getchar()
+        if key in user_tones:
+            tone = tone_set[key]
+            tempo1, sinal1 = sm.generateSin(tone[0], 1, 1, fs)
+            tempo2, sinal2 = sm.generateSin(tone[1], 1, 1, fs)
+            sinalRes = np.add(sinal1, sinal2)
+            print(sinalRes)
+            sd.play(sinalRes, fs)
 
-            a = stream.write(array.array('f',
-                                    ((volume * math.sin(i / (tone[0] / 100.)) + volume * math.sin(i / (tone[1] / 100.)))
-                                    for i in range(int(sr*length)))).tostring())
+        else:
+            print('Invalid sequence: Ignoring')
+            continue
 
 
-    stream.close()
-    p.terminate()
+
+    # stream.close()
+    # p.terminate()
 
 if __name__ == "__main__":
     main()
