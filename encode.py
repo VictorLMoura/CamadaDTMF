@@ -3,7 +3,7 @@ import array
 import math
 import time
 import signalTeste
-
+import matplotlib.pyplot as plt
 
 def main():
     user_freq = [697.0, 770.0, 852.0, 941.0,
@@ -38,24 +38,19 @@ def main():
     while True:
         commands = input('>>>').upper()
         for command in commands:
-            if command is 'U':
-                tone_set = user_tones
-                continue
-            elif command is 'E':
-                signalTeste.plotFFT(,44100)
             try:
                 tone = tone_set[command]
             except KeyError:
                 print('Invalid sequence: \'{}\'. Ignoring'.format(command))
                 continue
 
-            stream.write(array.array('f',
+            a = stream.write(array.array('f',
                                     ((volume * math.sin(i / (tone[0] / 100.)) + volume * math.sin(i / (tone[1] / 100.)))
                                     for i in range(int(sr*length)))).tostring())
 
 
     stream.close()
     p.terminate()
-    
+
 if __name__ == "__main__":
     main()
