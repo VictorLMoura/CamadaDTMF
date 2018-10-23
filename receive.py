@@ -3,78 +3,104 @@ import numpy as np
 import sounddevice as sd
 import matplotlib.pyplot as plt
 import time
-import signalTeste
-import click
 import pickle
 import peakutils
+import keyboard
 
+sm = signalMeu()
+fs = 44100
+
+user_freq = [697.0, 770.0, 852.0, 941.0,
+            1209.0, 1336.0, 1477.0, 1633.0]
+user_tones = {
+    '1': (user_freq[0] + user_freq[4]),
+    '2': (user_freq[0] + user_freq[5]),
+    '3': (user_freq[0] + user_freq[6]),
+    'A': (user_freq[0] + user_freq[7]),
+    '4': (user_freq[1] + user_freq[4]),
+    '5': (user_freq[1] + user_freq[5]),
+    '6': (user_freq[1] + user_freq[6]),
+    'B': (user_freq[1] + user_freq[7]),
+    '7': (user_freq[2] + user_freq[4]),
+    '8': (user_freq[2] + user_freq[5]),
+    '9': (user_freq[2] + user_freq[6]),
+    'C': (user_freq[2] + user_freq[7]),
+    '*': (user_freq[3] + user_freq[4]),
+    '0': (user_freq[3] + user_freq[5]),
+    '#': (user_freq[3] + user_freq[6]),
+    'D': (user_freq[3] + user_freq[7]),
+}
 
 def main():
-    self.sm = signalMeu()
-    self.fs = 44100
-        user_freq = [697.0, 770.0, 852.0, 941.0,
-                    1209.0, 1336.0, 1477.0, 1633.0]
-        user_tones = {
-            '1': (user_freq[0], user_freq[4]),
-            '2': (user_freq[0], user_freq[5]),
-            '3': (user_freq[0], user_freq[6]),
-            'A': (user_freq[0], user_freq[7]),
-            '4': (user_freq[1], user_freq[4]),
-            '5': (user_freq[1], user_freq[5]),
-            '6': (user_freq[1], user_freq[6]),
-            'B': (user_freq[1], user_freq[7]),
-            '7': (user_freq[2], user_freq[4]),
-            '8': (user_freq[2], user_freq[5]),
-            '9': (user_freq[2], user_freq[6]),
-            'C': (user_freq[2], user_freq[7]),
-            '*': (user_freq[3], user_freq[4]),
-            '0': (user_freq[3], user_freq[5]),
-            '#': (user_freq[3], user_freq[6]),
-            'D': (user_freq[3], user_freq[7]),
-        }
 
-    self.matrix_frequencias =  {"1":(697,1209), "2":(697,1336), "3":(697,1209), "4":(770,1209), "5":(770,1336), "6":(770,1477), "7":(852,1209), "8":(852,1336), "9":(852,1477), "*":(941,1209), "0":(941,1336), "#":(941,1477)}
-    self.time = 0
-
-def record():
     duration = 2
-    recording = sd.rec(int(duration * self.frequencia), samplerate = self.frequencia, channels=1)
+    myrecording = sd.rec(int(duration * fs), samplerate = fs, channels=1)
     sd.wait()
-    return recording[:,0]
+    myrecord = myrecording[:,0]
 
-def findPeaks(self):
-    recording_fft = self.sig.calcFFT(self.record(), self.frequencia)
-    indexes = peakutils.indexes(recording_fft[1], thres=0.5, min_dist=10)
-    return indexes
+    recording_fft = sm.calcFFT(myrecord, fs)
+    indexes = peakutils.indexes(recording_fft[1], thres=100, min_dist=100, thres_abs=True)
+    return recording_fft[0][indexes], recording_fft[1][indexes], myrecord
 
-def plotFFT2(self):
-    recording_fft = self.sig.calcFFT(self.record(), self.frequencia)
+def plotFFT2(peaks, record):
+    recording_fft = sm.calcFFT(record, fs)
     plt.figure()
     plt.plot(recording_fft[0], np.abs(recording_fft[1]))
     plt.title("Fourier")
     plt.show()
 
-def findKeys(self):
-    peaks = self.findPeaks()
-    possible_frequency = [697, 1209, 1336, 770, 852, 1477, 941]
+def findKeys(peaks):
+    possible_frequency = [697.0, 770.0, 852.0, 941.0, 1209.0, 1336.0, 1477.0, 1633.0]
 
     received_frequency = []
     for peak in peaks:
-        for frequency in possible_frequency:
-            if abs(index - frequency) < 50:
-                received_frequency.append(frequency)
+        if peak > 650 and peak < 1700 and len(received_frequency) <= 1:
+            for frequency in possible_frequency:
+                if abs(peak - frequency) < 5:
+                    received_frequency.append(frequency)
 
-        #for key in self.matrix_frequencias.keys():
-        #    if
+    total = sum(received_frequency)
+    if total == 1906:
+        return "Tecla 1"
+    if total == 2033:
+        return "Tecla 2"
+    if total == 2174:
+        return "Tecla 3"
+    if total == 0:
+        return "Tecla A"
+    if total == 1979:
+        return "Tecla 4"
+    if total == 2106:
+        return "Tecla 5"
+    if total == 2247:
+        return "Tecla 6"
+    if total == 0:
+        return "Tecla B"
+    if total == 2061:
+        return "Tecla 7"
+    if total == 2188:
+        return "Tecla 8"
+    if total == 2329:
+        return "Tecla 9"
+    if total == 0:
+        return "Tecla C"
+    if total == 0:
+        return "Tecla *"
+    if total == 2277:
+        return "Tecla 0"
+    if total == 0:
+        return "Tecla #"
+    if total == 0:
+        return "Tecla D"
+    else:
+        return total
 
-def plotHarmonics():
-    frequencies = self.findPeaks()
-    for frequency in frequencies:
-        senoid = self.sig.generateSin(frequency, 1, 2, self.frequencia)
-        plt.figure()
-        plt.title("Gráfico para o harmonico de {} Hz".format(frequency))
-        plt.plot(senoid[0][:2000], senoid[1][:2000])
+def plotHarmonics(peaks):
+    plt.figure()
+    plt.plot(np.arange(0,2,1/44100)[:5000], peaks[:5000])
     plt.show()
 
-if __name__ == "__main__":
-    main()
+freqs, amps, myrecord = main()
+plotFFT2(freqs,myrecord)
+print(findKeys(freqs))
+plotHarmonics(myrecord)
