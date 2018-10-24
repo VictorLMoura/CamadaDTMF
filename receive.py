@@ -7,7 +7,6 @@ import pickle
 import peakutils
 import keyboard
 
-<<<<<<< HEAD
 sm = signalMeu()
 fs = 44100
 
