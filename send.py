@@ -6,6 +6,7 @@ import signalTeste
 import click
 import matplotlib.pyplot as plt
 
+
 sm = signalMeu()
 
 def main():
@@ -39,15 +40,29 @@ def main():
             tone = tone_set[key]
             tempo, sinal1 = sm.generateSin(tone[0], 1, 1, fs)
             tempo, sinal2 = sm.generateSin(tone[1], 1, 1, fs)
-            sinalRes = np.add(sinal1, sinal2)
-            print(sinalRes)
-            sd.play(sinalRes, fs)
-            plt.plot(tempo[:1000], sinalRes[:1000])
-            sm.plotFFT(sinalRes, fs)
-            plt.show()
 
+            sinalRes = np.add(sinal1, sinal2)
+            sinalmax = max(sinalRes)
+            sinalmin = min(sinalRes)
+
+            sinalNorm = []
+            for i in range(len(sinalRes-1)):
+                x = (sinalRes[i] - sinalmin)/(sinalmax - sinalmin)
+                sinalNorm.append(x)
+
+            sinalRes_filter = sm.low_pass_filter(sinalNorm)
+            sinalRes_filter2 = sm.low_pass_filter2(sinalNorm)
+            plt.plot(tempo[:1000], sinalRes[:1000])
+            plt.plot(tempo[:1000], sinalRes_filter[:1000])
+            #plt.plot(tempo[:1000], sinalRes_filter2[:1000])
+            plt.plot(tempo[:1000], sinalNorm[:1000])
+
+            #sm.plotFFT(sinalRes, fs)
+            plt.show()
+            
+            sm.am_modulation(sinalRes_filter[:4000], sinalNorm[:4000])
         else:
-            print('Invalid sequence: Ignoring')
+            print('Invalid sequence ', key, ': Ignoring')
             continue
 
 
