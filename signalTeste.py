@@ -60,10 +60,10 @@ class signalMeu:
         return yFiltrado
 
     def am_modulation(self,portadora, sinalNorm):
-        sinal = portadora*sinalNorm
+        sinal = np.multiply(portadora,sinalNorm)
         sd.play(sinal, 44100)
 
     def am_demodulation(self, portadora, myrecord):
-        sinal = portadora*myrecord
-        print("audio")
+        sinal = np.multiply(portadora,myrecord)
         sd.play(sinal, 44100)
+        return sinal

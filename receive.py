@@ -110,6 +110,12 @@ plt.show()
 tempo, sinal1 = sm.generateSin(14000, 1, 1, 2*fs)
 sinal2 = np.multiply(sinal1,myrecord)
 sinalRes_filter = sm.low_pass_filter(sinal2)
-plotFFT2(freqs,myrecord)
 
-sm.am_demodulation(sinalRes_filter[:2*fs], myrecord)
+inicio = 30000
+fim = 72000
+
+sinal_demodulado = sm.am_demodulation(sinalRes_filter[10000:2*fs], myrecord[10000:])
+
+plt.plot(tempo[inicio:fim], sinal_demodulado[inicio:fim])
+plt.show()
+

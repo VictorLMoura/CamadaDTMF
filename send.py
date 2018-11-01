@@ -32,7 +32,7 @@ def main():
     }
 
     fs = 44100
-    inicio = 30000
+    inicio = 15000
     fim = 72000
 
     tone_set = user_tones
@@ -53,16 +53,11 @@ def main():
                 sinalNorm.append(x)
 
             sinalRes_filter = sm.low_pass_filter(sinalNorm)
-            #sinalRes_filter2 = sm.low_pass_filter2(sinalNorm)
-            plt.plot(tempo[:1000], sinalRes[:1000])
-            plt.plot(tempo[:1000], sinalRes_filter[:1000])
-            #plt.plot(tempo[:1000], sinalRes_filter2[:1000])
-            plt.plot(tempo[:1000], sinalNorm[:1000])
 
-            sm.plotFFT(sinalRes, fs)
+            sm.plotFFT(sinalRes_filter, fs)
             plt.show()
             
-            sm.am_modulation(sinalRes_filter[:4000], sinalNorm[:4000])
+            sm.am_modulation(sinalRes_filter[:fs], sinalNorm[:fs])
 
         elif key == 'k':
             '''
@@ -87,16 +82,18 @@ def main():
             sinalRes_filter = sm.low_pass_filter(sinalNorm)
             
             sinalRes_filter = sm.low_pass_filter(sinalNorm)
-            #sinalRes_filter2 = sm.low_pass_filter2(sinalNorm)
-            plt.plot(tempo[inicio:fim], sinal2[inicio:fim])
-            #plt.plot(tempo[inicio:fim], sinalRes_filter[inicio:fim])
-            #plt.plot(tempo[inicio:fim], sinalRes_filter2[inicio:fim])
-            plt.plot(tempo[inicio:fim], sinalNorm[inicio:fim])
+            sinalRes_filter2 = sm.low_pass_filter2(sinalNorm)
 
-            sm.plotFFT(sinalNorm, fs)
+            plt.plot(tempo[inicio:fim], sinal2[inicio:fim])
+            plt.plot(tempo[inicio:fim], sinalNorm[inicio:fim])
+            plt.show()
+            #plt.plot(tempo[inicio:fim], sinalRes_filter[inicio:fim])
+            plt.plot(tempo[inicio:fim], sinalRes_filter2[inicio:fim])
             plt.show()
             
-            sm.am_modulation(sinalRes_filter[:2*fs], sinalNorm[:6*fs])
+            sm.plotFFT(sinalNorm, fs)
+            
+            sm.am_modulation(sinalRes_filter[20000:2*fs], sinalNorm[20000:2*fs])
 
 
 
