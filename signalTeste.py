@@ -64,5 +64,6 @@ class signalMeu:
         sd.play(sinal, 44100)
 
     def am_demodulation(self, portadora, myrecord):
-        #ssinal = *myrecord
-        return None
+        sinal = portadora*myrecord
+        print("audio")
+        sd.play(sinal, 44100)

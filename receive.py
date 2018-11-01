@@ -104,4 +104,12 @@ freqs, amps, myrecord = main()
 plotFFT2(freqs,myrecord)
 print(findKeys(freqs))
 plotHarmonics(myrecord)
-sm.am_demodulation(Harmonics)
+plt.plot(np.arange(0,2,1/44100)[:1000], myrecord[:1000])
+plt.show()
+
+tempo, sinal1 = sm.generateSin(14000, 1, 1, 2*fs)
+sinal2 = np.multiply(sinal1,myrecord)
+sinalRes_filter = sm.low_pass_filter(sinal2)
+plotFFT2(freqs,myrecord)
+
+sm.am_demodulation(sinalRes_filter[:2*fs], myrecord)
