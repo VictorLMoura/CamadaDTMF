@@ -1,22 +1,12 @@
-from Tkinter import *
-import top_block as tb
-
-global E1
-
-def callback():
-    print(E1.get())
-    file = open("file.txt", "w")
-    file.write(E1.get())
-    file.close()
-    tb.main()
-
-top = Tk()
-L1 = Label(top, text="Mensagem")
-L1.grid(row=0, column=0)
-E1 = Entry(top, bd = 5)
-E1.grid(row=0, column=1)
-
-MyButton1 = Button(top, text="Submit", width=10, command=callback)
-MyButton1.grid(row=1, column=1)
-
-top.mainloop()
+import socket
+HOST = '127.0.0.1'     # Endereco IP do Servidor
+PORT = 5000            # Porta que o Servidor esta
+tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+dest = (HOST, PORT)
+tcp.connect(dest)
+print 'Para sair use CTRL+X\n'
+msg = raw_input()
+while msg <> '\x18':
+    tcp.send (msg)
+    msg = raw_input()
+tcp.close()
