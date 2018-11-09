@@ -102,20 +102,20 @@ def plotHarmonics(peaks):
 
 freqs, amps, myrecord = main()
 plotFFT2(freqs,myrecord)
-print(findKeys(freqs))
-plotHarmonics(myrecord)
+#print(findKeys(freqs))
+#plotHarmonics(myrecord)
 plt.plot(np.arange(0,2,1/44100)[:1000], myrecord[:1000])
 plt.show()
 
 tempo, sinal1 = sm.generateSin(14000, 1, 1, 2*fs)
 sinal2 = np.multiply(sinal1,myrecord)
-sinalRes_filter = sm.low_pass_filter(sinal2)
+sinalRes_filter = sm.low_pass_filter2(sinal2)
+sd.play(sinalRes_filter,44100)
 
 inicio = 30000
 fim = 72000
 
-sinal_demodulado = sm.am_demodulation(sinalRes_filter[10000:2*fs], myrecord[10000:])
+#sinal_demodulado = sm.am_demodulation(sinalRes_filter[10000:2*fs], myrecord[10000:])
 
-plt.plot(tempo[inicio:fim], sinal_demodulado[inicio:fim])
+plt.plot(tempo[inicio:fim], sinalRes_filter[inicio:fim])
 plt.show()
-
